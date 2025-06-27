@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsc && node dist/index.js",
-    "dev": "ts-node-dev --respawn src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "import": "ts-node src/scripts/importTransactions.ts"
-  },
+  "build": "tsc",
+  "start": "node dist/index.js",
+  "dev": "ts-node-dev --respawn src/index.ts",
+  "import": "ts-node src/scripts/importTransactions.ts"
+}
+,
   "keywords": [],
   "author": "",
   "license": "ISC",
