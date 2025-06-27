@@ -13,56 +13,64 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ✅ Required for Render (handles X-Forwarded-For header for rate-limiting)
+// ✅ Enable trust proxy for Render (fixes rate limiting + forwarded IPs)
 app.set('trust proxy', 1);
 
-// 🛡️ Security middleware
+// 🛡 Security middleware
 app.use(helmet());
 
-// 🌍 CORS: Allow specific domains (frontend on Render + localhost for dev)
+// ✅ Safe CORS config for both localhost and deployed frontend
 const allowedOrigins = [
   'http://localhost:3000',
   'https://financial-dashboard-frontend-fvy2.onrender.com',
 ];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.warn('❌ Blocked by CORS:', origin);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  })
+);
 
-// 📋 Log request origin for debugging CORS issues
+// 🔍 Log request origins for CORS debugging
 app.use((req, res, next) => {
   console.log('Request Origin:', req.headers.origin);
   next();
 });
 
-// 🧠 JSON Parser
+// 🧠 Body parser
 app.use(express.json({ limit: '10kb' }));
 
-// 🚫 Rate Limiter
+// 🚫 Rate limiter (limits 100 requests per 15 minutes per IP)
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100, // max 100 requests per 15 minutes
+  max: 100,
 });
 app.use('/api', limiter);
 
-// 📦 Routes
+// 🔗 Routes
+app.get('/', (req, res) => {
+  res.send('🟢 Financial Dashboard API is live!');
+});
 app.use('/api/auth', authRoutes);
 app.use('/api/transactions', transactionRoutes);
 
-// ⚙️ MongoDB connection
+// 🔌 MongoDB connection
 mongoose
   .connect(process.env.MONGO_URI || '')
   .then(() => {
     console.log('✅ MongoDB connected');
-    app.listen(PORT, () =>
-      console.log(`🚀 Server running on port ${PORT}`)
-    );
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
   })
-  .catch((err) => console.error('❌ MongoDB connection error:', err));
+  .catch((err) => {
+    console.error('❌ MongoDB connection error:', err);
+  });
