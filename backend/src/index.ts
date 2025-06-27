@@ -23,6 +23,7 @@ app.use(helmet());
 const allowedOrigins = [
   'http://localhost:3000',
   'https://financial-dashboard-frontend-fvy2.onrender.com',
+  'https://financial-dashboard-evfv0adxq-vanshs-projects-15abcf20.vercel.app'
 ];
 
 app.use(
