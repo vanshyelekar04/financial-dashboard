@@ -3,6 +3,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/Login';
 import DashboardPage from './pages/Dashboard';
+import PrivateRoute from './routes/PrivateRoute';
 import { useAuth } from './contexts/AuthContext';
 
 const App: React.FC = () => {
@@ -16,7 +17,11 @@ const App: React.FC = () => {
       />
       <Route
         path="/dashboard"
-        element={isAuthenticated ? <DashboardPage /> : <Navigate to="/login" />}
+        element={
+          <PrivateRoute>
+            <DashboardPage />
+          </PrivateRoute>
+        }
       />
       <Route path="*" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />} />
     </Routes>
