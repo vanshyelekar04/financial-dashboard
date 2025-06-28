@@ -21,12 +21,10 @@ import MainLayout from '../layouts/MainLayout';
 import Topbar from '../components/Topbar';
 import AddTransactionModal from '../components/AddTransactionModal';
 import EditTransactionModal from '../components/EditTransactionModal';
-import { useNavigate } from 'react-router-dom';
 
 const DashboardPage: React.FC = () => {
   const { transactions, fetchTransactions } = useTransactionStore();
-  const { logout, isAuthenticated } = useAuth(); // ✅ Removed unused token
-  const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const [openExport, setOpenExport] = useState(false);
   const [openAdd, setOpenAdd] = useState(false);
@@ -34,14 +32,9 @@ const DashboardPage: React.FC = () => {
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
-  // ✅ Fetch transactions if authenticated
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/login');
-    } else {
-      fetchTransactions();
-    }
-  }, [isAuthenticated, fetchTransactions, navigate]);
+    fetchTransactions();
+  }, []);
 
   const revenue = transactions.filter(tx => tx.amount > 0).reduce((sum, tx) => sum + tx.amount, 0);
   const expenses = transactions.filter(tx => tx.amount < 0).reduce((sum, tx) => sum + tx.amount, 0);
@@ -57,11 +50,13 @@ const DashboardPage: React.FC = () => {
     <MainLayout>
       <Topbar />
 
+      {/* Header Section */}
       <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ px: 0, pt: 0, pb: 3, mt: 0 }}>
         <Typography variant="h4" sx={{ color: 'text.primary' }}>Dashboard</Typography>
         <Button variant="outlined" color="secondary" onClick={logout}>Logout</Button>
       </Box>
 
+      {/* Stat Cards */}
       <Box display="flex" flexWrap="wrap" gap={3} mb={4}>
         <StatCard title="Balance" value={`$${balance.toFixed(2)}`} icon={AccountBalanceWalletIcon} color="#3A86FF" />
         <StatCard title="Revenue" value={`$${revenue.toFixed(2)}`} icon={TrendingUpIcon} color="#06D6A0" />
@@ -69,6 +64,7 @@ const DashboardPage: React.FC = () => {
         <StatCard title="Savings" value={`$${savings.toFixed(2)}`} icon={SavingsIcon} color="#FFD166" />
       </Box>
 
+      {/* Filters Toggle */}
       <Stack direction="row" spacing={2} alignItems="center" mb={2}>
         <Button
           variant="outlined"
@@ -88,12 +84,14 @@ const DashboardPage: React.FC = () => {
         </Button>
       </Stack>
 
+      {/* Collapsible Filters */}
       <Collapse in={showFilters}>
         <Box mb={3}>
           <TransactionFilters />
         </Box>
       </Collapse>
 
+      {/* Table */}
       <Paper sx={{ mb: 4, p: 2, bgcolor: '#252537' }}>
         <Table>
           <TableHead>
@@ -145,9 +143,11 @@ const DashboardPage: React.FC = () => {
         </Table>
       </Paper>
 
+      {/* Pagination and Charts */}
       <PaginationBar />
       <TransactionCharts />
 
+      {/* Modals */}
       <ExportModal open={openExport} onClose={() => setOpenExport(false)} />
       <AddTransactionModal open={openAdd} onClose={() => setOpenAdd(false)} />
       {selectedTransaction && (

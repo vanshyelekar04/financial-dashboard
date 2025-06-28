@@ -1,17 +1,10 @@
-// scripts/importTransactions.ts
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
+// src/scripts/importOnStartup.ts
 import fs from 'fs';
 import path from 'path';
 import { Transaction } from '../models/Transaction';
 
-dotenv.config();
-
-const run = async () => {
+const importTransactions = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI!);
-    console.log('✅ MongoDB connected');
-
     const rawData = fs.readFileSync(path.join(__dirname, '../data/transactions.json'), 'utf-8');
     const transactions = JSON.parse(rawData);
 
@@ -27,12 +20,11 @@ const run = async () => {
 
     await Transaction.deleteMany({});
     await Transaction.insertMany(formatted);
-    console.log(`✅ Imported ${formatted.length} transactions successfully.`);
-    process.exit(0);
+
+    console.log(`✅ Auto-imported ${formatted.length} transactions.`);
   } catch (err) {
-    console.error('❌ Failed to import transactions:', err);
-    process.exit(1);
+    console.error('❌ Auto-import failed:', err);
   }
 };
 
-run();
+export default importTransactions;

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { TextField, Button, Container, Typography, Box, Paper } from '@mui/material';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useSnackbar } from '../contexts/SnackbarContext';
-import API from '../services/api'; // use your custom axios instance here
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -14,16 +14,12 @@ const LoginPage: React.FC = () => {
 
   const handleLogin = async () => {
     try {
-      const res = await API.post('/auth/login', {
-        email: email.trim().toLowerCase(),
-        password,
-      });
+      const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
       login(res.data.token);
       showSnackbar('Login successful!', 'success');
       navigate('/dashboard');
     } catch (err) {
       showSnackbar('Invalid credentials. Please try again.', 'error');
-      console.error('Login failed:', err);
     }
   };
 
