@@ -25,7 +25,7 @@ import { useNavigate } from 'react-router-dom';
 
 const DashboardPage: React.FC = () => {
   const { transactions, fetchTransactions } = useTransactionStore();
-  const { logout, isAuthenticated, token } = useAuth(); // ✅ Include token
+  const { logout, isAuthenticated } = useAuth(); // ✅ Removed unused token
   const navigate = useNavigate();
 
   const [openExport, setOpenExport] = useState(false);
@@ -34,23 +34,14 @@ const DashboardPage: React.FC = () => {
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
-  // ✅ Only fetch data when token is available
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     navigate('/login');
-  //   } else if (token) {
-  //     fetchTransactions();
-  //   }
-  // }, [isAuthenticated, token]);
-
+  // ✅ Fetch transactions if authenticated
   useEffect(() => {
-  if (!isAuthenticated) {
-    navigate('/login');
-  } else {
-    fetchTransactions();
-  }
-// ✅ Add fetchTransactions and navigate to dependency array
-}, [isAuthenticated, fetchTransactions, navigate]);
+    if (!isAuthenticated) {
+      navigate('/login');
+    } else {
+      fetchTransactions();
+    }
+  }, [isAuthenticated, fetchTransactions, navigate]);
 
   const revenue = transactions.filter(tx => tx.amount > 0).reduce((sum, tx) => sum + tx.amount, 0);
   const expenses = transactions.filter(tx => tx.amount < 0).reduce((sum, tx) => sum + tx.amount, 0);
