@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
 export const verifyToken = (req: Request, res: Response, next: NextFunction): void => {
-  // Skip authentication for public files
-  if (req.path.includes('.json') || req.path.includes('.ico')) {
+  // Skip authentication for public files and health checks
+  if (req.path.includes('.json') || req.path.includes('.ico') || req.path === '/health') {
     return next();
   }
 
