@@ -8,7 +8,7 @@ import rateLimit from 'express-rate-limit';
 
 import authRoutes from './routes/auth.routes';
 import transactionRoutes from './routes/transaction.routes';
-import importTransactions from './scripts/importTransactions'; 
+import importTransactions from './scripts/importTransactions';
 
 dotenv.config();
 
@@ -18,8 +18,11 @@ const PORT = process.env.PORT || 5000;
 // 🔐 Security Middleware
 app.use(helmet());
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://financial-dashboard-ivory-pi.vercel.app','https://financial-dashboard-git-main-vanshs-projects-15abcf20.vercel.app/',
-    'https://financial-dashboard-d9dfrwscl-vanshs-projects-15abcf20.vercel.app'
+  origin: ['http://localhost:3000', 
+    'https://financial-dashboard-ivory-pi.vercel.app', 
+    'https://financial-dashboard-git-main-vanshs-projects-15abcf20.vercel.app/',
+    'https://financial-dashboard-d9dfrwscl-vanshs-projects-15abcf20.vercel.app',
+    'https://financial-dashboard.vercel.app'
   ],
   credentials: true,
 }));
@@ -42,7 +45,7 @@ mongoose
   .then(async () => {
     console.log('✅ MongoDB connected');
 
-    await importTransactions(); 
+    await importTransactions();
 
     app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   })
