@@ -23,7 +23,7 @@ import AddTransactionModal from '../components/AddTransactionModal';
 import EditTransactionModal from '../components/EditTransactionModal';
 
 const DashboardPage: React.FC = () => {
-  const { transactions, fetchTransactions } = useTransactionStore();
+  const { transactions, fetchTransactions, stats, fetchStats } = useTransactionStore();
   const { logout } = useAuth();
 
   const [openExport, setOpenExport] = useState(false);
@@ -34,12 +34,13 @@ const DashboardPage: React.FC = () => {
 
   useEffect(() => {
     fetchTransactions();
+    fetchStats();
   }, []);
 
-  const revenue = transactions.filter(tx => tx.amount > 0).reduce((sum, tx) => sum + tx.amount, 0);
-  const expenses = transactions.filter(tx => tx.amount < 0).reduce((sum, tx) => sum + tx.amount, 0);
-  const balance = revenue + expenses;
-  const savings = revenue * 0.2;
+  const revenue = stats?.revenue || 0;
+  const expenses = stats?.expenses || 0;
+  const balance = stats?.totalBalance || 0;
+  const savings = stats?.savings || 0;
 
   const colorFor = (status: string) =>
     status.toLowerCase() === 'paid' ? 'success'
