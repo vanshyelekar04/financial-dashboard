@@ -9,6 +9,8 @@ import path from 'path';
 import authRoutes from './routes/auth.routes';
 import transactionRoutes from './routes/transaction.routes';
 import { seedTransactionsIfEmpty } from './utils/seed';
+import { verifyToken } from './middlewares/auth.middleware';
+
 
 dotenv.config();
 
@@ -20,6 +22,8 @@ app.set('trust proxy', 1);
 
 // Security middleware
 app.use(helmet());
+
+app.use(verifyToken); 
 
 // Allow ALL origins
 app.use(cors({
