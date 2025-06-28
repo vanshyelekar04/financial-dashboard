@@ -35,13 +35,22 @@ const DashboardPage: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   // ✅ Only fetch data when token is available
+  // useEffect(() => {
+  //   if (!isAuthenticated) {
+  //     navigate('/login');
+  //   } else if (token) {
+  //     fetchTransactions();
+  //   }
+  // }, [isAuthenticated, token]);
+
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/login');
-    } else if (token) {
-      fetchTransactions();
-    }
-  }, [isAuthenticated, token]);
+  if (!isAuthenticated) {
+    navigate('/login');
+  } else {
+    fetchTransactions();
+  }
+// ✅ Add fetchTransactions and navigate to dependency array
+}, [isAuthenticated, fetchTransactions, navigate]);
 
   const revenue = transactions.filter(tx => tx.amount > 0).reduce((sum, tx) => sum + tx.amount, 0);
   const expenses = transactions.filter(tx => tx.amount < 0).reduce((sum, tx) => sum + tx.amount, 0);

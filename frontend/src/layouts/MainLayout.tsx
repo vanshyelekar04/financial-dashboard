@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Toolbar } from '@mui/material';
+import { Box } from '@mui/material';
 import Sidebar from '../components/Sidebar';
 
 interface Props {

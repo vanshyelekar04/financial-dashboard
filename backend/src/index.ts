@@ -21,7 +21,7 @@ app.use(helmet());
 
 // 🔓 CORS (Allow all origins)
 app.use(cors({
-  origin: process.env.FRONTEND_URL,
+  origin: '*',
   credentials: true,
 }));
 
