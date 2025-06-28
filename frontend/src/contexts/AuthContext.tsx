@@ -1,12 +1,11 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import API from '../services/api';
+// src/contexts/AuthContext.tsx
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 interface AuthContextType {
   token: string | null;
   isAuthenticated: boolean;
   login: (token: string) => void;
   logout: () => void;
-  checkAuth: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -14,7 +13,6 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   login: () => {},
   logout: () => {},
-  checkAuth: async () => {}
 });
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -30,23 +28,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setToken(null);
   };
 
-  const checkAuth = async () => {
-    const storedToken = localStorage.getItem('token');
-    if (storedToken) {
-      try {
-        // Verify token with backend
-        await API.get('/auth/verify');
-        setToken(storedToken);
-      } catch (err) {
-        logout();
-      }
-    }
-  };
-
   const isAuthenticated = !!token;
 
   return (
-    <AuthContext.Provider value={{ token, isAuthenticated, login, logout, checkAuth }}>
+    <AuthContext.Provider value={{ token, isAuthenticated, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
