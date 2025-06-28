@@ -1,6 +1,6 @@
 {
-  "short_name": "Finance Dashboard",
-  "name": "Financial Analytics Dashboard",
+  "short_name": "React App",
+  "name": "Create React App Sample",
   "icons": [
     {
       "src": "favicon.ico",
@@ -10,8 +10,7 @@
     {
       "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192",
-      "purpose": "any maskable"
+      "sizes": "192x192"
     },
     {
       "src": "logo512.png",
@@ -21,8 +20,6 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#1E1E2F",
-  "background_color": "#1E1E2F",
-  "scope": "/",
-  "orientation": "portrait-primary"
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
 }

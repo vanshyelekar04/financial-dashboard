@@ -1,32 +1,18 @@
-import fs from 'fs';
-import path from 'path';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 import { Transaction } from '../models/Transaction';
 
-export const seedTransactionsIfEmpty = async () => {
-  const count = await Transaction.countDocuments();
+dotenv.config();
 
-  if (count > 0) {
-    console.log('🟡 Transactions already exist. Skipping seed.');
-    return;
-  }
+mongoose.connect(process.env.MONGO_URI!).then(async () => {
+  await Transaction.deleteMany();
 
-  const rawData = fs.readFileSync(
-    path.join(__dirname, '../../data/transactions.json'),
-    'utf-8'
-  );
+  await Transaction.insertMany([
+    { amount: 1500, category: 'Salary', status: 'success', user: 'user1', date: new Date('2025-01-01') },
+    { amount: -300, category: 'Groceries', status: 'success', user: 'user1', date: new Date('2025-01-05') },
+    { amount: -1200, category: 'Rent', status: 'success', user: 'user2', date: new Date('2025-01-03') },
+  ]);
 
-  const transactions = JSON.parse(rawData);
-
-  const formatted = transactions.map((tx: any) => ({
-    _id: String(tx.id),
-    date: tx.date,
-    amount: tx.amount,
-    category: tx.category,
-    status: tx.status,
-    user: tx.user_id,
-    user_profile: tx.user_profile ?? '',
-  }));
-
-  await Transaction.insertMany(formatted);
-  console.log(`✅ Seeded ${formatted.length} transactions`);
-};
+  console.log('Dummy transactions inserted!');
+  process.exit();
+});
