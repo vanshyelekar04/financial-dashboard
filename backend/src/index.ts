@@ -21,7 +21,7 @@ app.use(helmet());
 
 // 🔓 CORS (Allow all origins)
 app.use(cors({
-  origin: (origin, callback) => callback(null, true),
+  origin: process.env.FRONTEND_URL,
   credentials: true,
 }));
 
@@ -34,12 +34,12 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-// ✅ Serve static files (like manifest.json)
-app.use(express.static(path.join(__dirname, '..', 'public')));
+// Public file serving (must be before route protection)
+app.use(express.static(path.join(__dirname, 'public')));
 
-// ✅ Serve manifest.json explicitly (optional fallback)
+// Explicit route for manifest.json (optional)
 app.get('/manifest.json', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'manifest.json'));
+  res.sendFile(path.join(__dirname, 'public', 'manifest.json'));
 });
 
 // Routes
