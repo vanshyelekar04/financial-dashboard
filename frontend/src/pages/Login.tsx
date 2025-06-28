@@ -1,16 +1,9 @@
 import React, { useState } from 'react';
-import {
-  TextField,
-  Button,
-  Container,
-  Typography,
-  Box,
-  Paper
-} from '@mui/material';
+import { TextField, Button, Container, Typography, Box, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useSnackbar } from '../contexts/SnackbarContext';
-import API from '../services/api';
+import API from '../services/api'; // use your custom axios instance here
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -40,29 +33,9 @@ const LoginPage: React.FC = () => {
         <Typography variant="h5" gutterBottom>
           Login
         </Typography>
-        <Box component="form" autoComplete="on" display="flex" flexDirection="column" gap={2}>
-          <TextField
-            id="email"
-            name="email"
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="email"
-            fullWidth
-            required
-          />
-          <TextField
-            id="password"
-            name="password"
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
-            fullWidth
-            required
-          />
+        <Box display="flex" flexDirection="column" gap={2}>
+          <TextField label="Email" value={email} onChange={e => setEmail(e.target.value)} fullWidth />
+          <TextField label="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} fullWidth />
           <Button variant="contained" color="primary" onClick={handleLogin}>
             Login
           </Button>
