@@ -17,7 +17,10 @@ const PORT = process.env.PORT || 5000;
 
 // 🔐 Security Middleware
 app.use(helmet());
-app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://financial-dashboard-ivory-pi.vercel.app','https://financial-dashboard-git-main-vanshs-projects-15abcf20.vercel.app/'],
+  credentials: true,
+}));
 app.use(express.json({ limit: '10kb' }));
 
 // 🛡 Rate Limiting
@@ -37,7 +40,7 @@ mongoose
   .then(async () => {
     console.log('✅ MongoDB connected');
 
-    await importTransactions(); // ✅ auto-import on startup
+    await importTransactions(); 
 
     app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
   })

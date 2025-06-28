@@ -1,8 +1,9 @@
-// src/controllers/transaction.controller.ts
 import { Request, Response } from 'express';
 import { Parser } from 'json2csv';
 import { Transaction } from '../models/Transaction';
+import { v4 as uuidv4 } from 'uuid'; // Only needed if using custom _id
 
+// ✅ Fetch all transactions with filters, sorting, and pagination
 export const getTransactions = async (req: Request, res: Response): Promise<void> => {
   try {
     const {
@@ -14,7 +15,7 @@ export const getTransactions = async (req: Request, res: Response): Promise<void
 
     const query: any = {};
 
-    // Case-insensitive full-text search
+    // 🔍 Full-text case-insensitive search
     if (search) {
       const regex = new RegExp(search, 'i');
       query.$or = [
@@ -55,19 +56,20 @@ export const getTransactions = async (req: Request, res: Response): Promise<void
       .limit(perPage);
 
     res.status(200).json({ data: transactions, total });
-  } catch (err) {
-    console.error('[GET TRANSACTIONS ERROR]', err);
-    res.status(400).json({ message: 'Invalid query parameters or server error', error: err });
+  } catch (err: any) {
+    console.error('[GET TRANSACTIONS ERROR]', err.message || err);
+    res.status(400).json({ message: 'Invalid query parameters or server error', error: err.message || err });
   }
 };
 
-// src/controllers/transaction.controller.ts
-
+// ✅ Create new transaction with optional _id generation
 export const createTransaction = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { amount, category, status, user, date, user_profile } = req.body;
+    const { _id, amount, category, status, user, date, user_profile } = req.body;
 
+    // Manually assign _id if schema has _id: { type: String } and _id: false
     const transaction = await Transaction.create({
+      _id: _id || uuidv4(), // use provided ID or generate one
       amount,
       category,
       status,
@@ -77,12 +79,13 @@ export const createTransaction = async (req: Request, res: Response): Promise<vo
     });
 
     res.status(201).json(transaction);
-  } catch (error) {
-    console.error('[CREATE ERROR]', error);
-    res.status(500).json({ message: 'Failed to create transaction', error });
+  } catch (error: any) {
+    console.error('[CREATE ERROR]', error.message || error);
+    res.status(500).json({ message: 'Failed to create transaction', error: error.message || error });
   }
 };
 
+// ✅ Update an existing transaction
 export const updateTransaction = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
@@ -96,32 +99,33 @@ export const updateTransaction = async (req: Request, res: Response): Promise<vo
     }
 
     res.status(200).json(updated);
-  } catch (error) {
-    console.error('[UPDATE ERROR]', error);
-    res.status(500).json({ message: 'Failed to update transaction', error });
+  } catch (error: any) {
+    console.error('[UPDATE ERROR]', error.message || error);
+    res.status(500).json({ message: 'Failed to update transaction', error: error.message || error });
   }
 };
 
-
-
+// ✅ Export filtered transactions to CSV
 export const exportCSV = async (req: Request, res: Response): Promise<void> => {
   try {
     const fields = (req.query.fields as string)?.split(',') ||
       ['amount', 'category', 'date', 'user', 'status'];
 
-    const transactions = await Transaction.find().limit(1000);
+    const transactions = await Transaction.find().limit(1000); // Export limit
     const parser = new Parser({ fields });
+
     const records = transactions.map(tx => ({
       ...tx.toObject(),
-      date: tx.date.toISOString().split('T')[0],
+      date: tx.date.toISOString().split('T')[0], // format date
     }));
+
     const csv = parser.parse(records);
 
     res.header('Content-Type', 'text/csv');
     res.header('Content-Disposition', 'attachment; filename=report.csv');
     res.status(200).send(csv);
-  } catch (err) {
-    console.error('[EXPORT CSV ERROR]', err);
-    res.status(500).json({ message: 'CSV generation failed', error: err });
+  } catch (err: any) {
+    console.error('[EXPORT CSV ERROR]', err.message || err);
+    res.status(500).json({ message: 'CSV generation failed', error: err.message || err });
   }
 };
