@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import path from 'path';
 
 import authRoutes from './routes/auth.routes';
 import transactionRoutes from './routes/transaction.routes';
@@ -13,31 +14,35 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ✅ Enable trust proxy for Render/Vercel (helps with rate limiting & forwarded IPs)
 app.set('trust proxy', 1);
 
-
-
-// 🛡 Security middleware
+// 🛡 Security
 app.use(helmet());
 
-// 🔓 CORS middleware (allow all origins - for testing or public APIs)
+// 🔓 CORS (Allow all origins)
 app.use(cors({
   origin: (origin, callback) => callback(null, true),
   credentials: true,
 }));
 
-// 🧠 JSON body parser
 app.use(express.json({ limit: '10kb' }));
 
-// 🚫 Basic Rate Limiting: 100 requests / 15 minutes per IP
+// 🚫 Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
 });
 app.use('/api', limiter);
 
-// 🔗 Routes
+// ✅ Serve static files (like manifest.json)
+app.use(express.static(path.join(__dirname, '..', 'public')));
+
+// ✅ Serve manifest.json explicitly (optional fallback)
+app.get('/manifest.json', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'manifest.json'));
+});
+
+// Routes
 app.get('/', (req, res) => {
   res.send('🟢 Financial Dashboard API is live!');
 });
@@ -45,9 +50,8 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/transactions', transactionRoutes);
 
-// 🔌 Connect to MongoDB
-mongoose
-  .connect(process.env.MONGO_URI || '')
+// MongoDB
+mongoose.connect(process.env.MONGO_URI || '')
   .then(() => {
     console.log('✅ MongoDB connected');
     app.listen(PORT, () => {
