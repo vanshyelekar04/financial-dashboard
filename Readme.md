@@ -1,4 +1,3 @@
-```markdown
 # 💰 Financial Analytics Dashboard
 
 A full-stack financial application that allows users to **analyze**, **search**, **filter**, and **export** company transactions in real time with advanced data visualizations and secure authentication.
@@ -64,7 +63,6 @@ Enable financial analysts to:
 ## 🗂️ Folder Structure
 
 ```
-
 financial-dashboard/
 ├── backend/
 │   ├── src/
@@ -77,17 +75,16 @@ financial-dashboard/
 │   │   └── transactions.json
 │   └── package.json
 └── frontend/
-├── src/
-│   ├── components/
-│   ├── layouts/
-│   ├── pages/
-│   ├── contexts/
-│   ├── store/
-│   ├── theme/
-│   └── App.tsx, main.tsx
-└── package.json
-
-````
+    ├── src/
+    │   ├── components/
+    │   ├── layouts/
+    │   ├── pages/
+    │   ├── contexts/
+    │   ├── store/
+    │   ├── theme/
+    │   └── App.tsx, main.tsx
+    └── package.json
+```
 
 ---
 
@@ -109,7 +106,7 @@ financial-dashboard/
 ```bash
 git clone https://github.com/vanshyelekar04/financial-dashboard.git
 cd financial-dashboard
-````
+```
 
 ---
 
@@ -128,9 +125,8 @@ MONGO_URI=your-mongodb-uri
 JWT_SECRET=your-secret-key
 ```
 
-> Replace `your-mongodb-uri` with MongoDB connection string
-> Example (don't copy this directly):
-> `mongodb+srv://username:password@cluster.mongodb.net/mydb`
+> Replace `your-mongodb-uri` with MongoDB connection string  
+> Example: `mongodb+srv://username:password@cluster.mongodb.net/mydb`
 
 #### ✅ Start Backend (with Auto Import)
 
@@ -139,7 +135,6 @@ npm run dev
 ```
 
 You should see:
-
 ```
 ✅ MongoDB connected
 ✅ Auto-imported 250 transactions.
@@ -178,24 +173,24 @@ Email:    admin@loopr.ai
 Password: admin123
 ```
 
-> These are hardcoded for demo purposes. You can update them in `backend/src/controllers/auth.controller.ts`
+> These are hardcoded in `backend/src/controllers/auth.controller.ts`
 
 ---
 
 ## 📦 CSV Export
 
-* Go to Dashboard
-* Click `Export CSV`
-* Select the columns
-* Click `Download`
+- Go to Dashboard
+- Click `Export CSV`
+- Select the columns
+- Click `Download`
 
-Your file will be automatically downloaded from the browser.
+Your file will be automatically downloaded.
 
 ---
 
 ## 🧪 Test Data
 
-The `backend/data/transactions.json` file contains preloaded dummy data with the following structure:
+The `backend/data/transactions.json` contains dummy data:
 
 ```json
 [
@@ -207,19 +202,15 @@ The `backend/data/transactions.json` file contains preloaded dummy data with the
     "status": "paid",
     "user_id": "vansh",
     "user_profile": "https://example.com/image.png"
-  },
-  ...
+  }
 ]
 ```
-
-You can modify or extend this file as needed.
 
 ---
 
 ## 🧼 Lint & Format
 
 ```bash
-# Format all files
 npx prettier --write .
 ```
 
@@ -227,25 +218,24 @@ npx prettier --write .
 
 ## 💡 Future Improvements
 
-* Role-based access (Admin/User)
-* PDF export
-* Mobile responsiveness
-* Data upload from CSV
+- Role-based access (Admin/User)
+- PDF export
+- Mobile responsiveness
+- Data upload from CSV
 
 ---
 
 ## 🙋 FAQ
 
-**Q: Getting CORS errors?**
-A: Make sure backend is running on port `5000` and frontend on `3000`. CORS is enabled for localhost in dev.
+**Q: Getting CORS errors?**  
+A: Make sure backend is running on port `5000` and frontend on `3000`. CORS is enabled for localhost.
 
-**Q: How to reset database?**
-A: Run `npm run import` in `backend/` folder to reset the transactions.
+**Q: How to reset database?**  
+A: Run `npm run import` inside the backend directory.
 
-**Q: How to deploy?**
-
-* Use **Vercel** for frontend
-* Use **Render** or **Railway** for backend + MongoDB Atlas
+**Q: How to deploy?**  
+- **Frontend**: Vercel  
+- **Backend**: Render or Railway + MongoDB Atlas
 
 ---
 
