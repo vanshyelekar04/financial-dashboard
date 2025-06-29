@@ -1,6 +1,5 @@
 import React from 'react';
 import { useTransactionStore } from '../store/useTransactionStore';
-import { getChartData } from '../utils/chartUtils';
 import { Typography, Paper, Box } from '@mui/material';
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -10,8 +9,12 @@ import {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#FF605C'];
 
 const TransactionCharts: React.FC = () => {
-  const { transactions } = useTransactionStore();
-  const { lineData, pieData } = getChartData(transactions);
+  const { stats } = useTransactionStore();
+
+  if (!stats) return null;
+
+  const pieData = Object.entries(stats.categoryBreakdown || {}).map(([name, value]) => ({ name, value }));
+  const lineData = stats.lineData || [];
 
   return (
     <Box sx={{
@@ -21,31 +24,27 @@ const TransactionCharts: React.FC = () => {
       mt: 4,
       width: '100%'
     }}>
-      {/* Revenue vs Expenses Chart */}
+      {/* Line Chart */}
       <Box sx={{ flex: 1, minWidth: 0 }}>
         <Paper sx={{ p: 2, height: '100%' }}>
-          <Typography variant="h6">Revenue vs Expenses</Typography>
+          <Typography variant="h6" mb={1}>Revenue vs Expenses</Typography>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={lineData}>
               <XAxis dataKey="date" />
               <YAxis />
               <Tooltip />
-              <Line
-                type="monotone"
-                dataKey="amount"
-                stroke="#8884d8"
-                strokeWidth={2}
-              />
+              <Line type="monotone" dataKey="amount" stroke="#8884d8" strokeWidth={2} />
             </LineChart>
           </ResponsiveContainer>
         </Paper>
       </Box>
 
-      {/* Category Breakdown Chart */}
+      {/* Pie Chart */}
       <Box sx={{ flex: 1, minWidth: 0 }}>
         <Paper sx={{ p: 2, height: '100%' }}>
+          <Typography variant="h6" mb={1}>Category Breakdown</Typography>
           {pieData.length === 0 ? (
-            <Typography variant="body2">No data to display</Typography>
+            <Typography>No data to display</Typography>
           ) : (
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>

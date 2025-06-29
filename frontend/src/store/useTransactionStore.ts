@@ -1,6 +1,7 @@
-// src/store/useTransactionStore.ts
 import { create } from 'zustand';
 import API from '../services/api';
+import axios from 'axios';
+
 
 export interface Transaction {
   _id: string;
@@ -18,6 +19,7 @@ export interface Stats {
   expenses: number;
   savings: number;
   categoryBreakdown: Record<string, number>;
+  lineData: { date: string; amount: number }[];
 }
 
 export interface Filter {
@@ -35,46 +37,61 @@ export interface Filter {
 
 interface Store {
   transactions: Transaction[];
-  total: number;
-  filters: Filter;
   stats: Stats | null;
+  filters: Filter;
   page: number;
   limit: number;
-  setPage: (p: number) => void;
-  setLimit: (l: number) => void;
-  setFilters: (f: Filter) => void;
+  total: number;
+  setPage: (page: number) => void;
+  setLimit: (limit: number) => void;
+  setFilters: (filters: Filter) => void;
   fetchTransactions: () => Promise<void>;
   fetchStats: () => Promise<void>;
 }
 
 export const useTransactionStore = create<Store>((set, get) => ({
   transactions: [],
-  total: 0,
-  filters: {},
   stats: null,
+  filters: {},
   page: 1,
   limit: 10,
+  total: 0,
+
   setPage: (page) => set({ page }),
-  setFilters: (filters) => set({ filters }),
   setLimit: (limit) => set({ limit }),
+  setFilters: (filters) => set({ filters, page: 1 }),
+
   fetchTransactions: async () => {
     const { filters, page, limit } = get();
     try {
-      const res = await API.get('/transactions', {
-        params: { ...filters, page, limit },
-      });
+      const res = await API.get('/transactions', { params: { ...filters, page, limit } });
       set({ transactions: res.data.data, total: res.data.total });
-    } catch (err) {
-      console.error('Fetch transactions error:', err);
+    } catch (err: any) {
+      console.error('[FETCH_TRANSACTIONS ERROR]', err.message || err);
     }
   },
+
   fetchStats: async () => {
-    const { filters } = get();
-    try {
-      const res = await API.get('/transactions/stats', { params: filters });
-      set({ stats: res.data });
-    } catch (err) {
-      console.error('Fetch stats error:', err);
-    }
-  },
+  const { filters } = get();
+  const {
+    search, category, status, user,
+    minAmount, maxAmount, startDate, endDate,
+    sortBy, sortOrder
+  } = filters;
+
+  const statFilters = {
+    search, category, status, user, minAmount, maxAmount, startDate, endDate
+  };
+
+  try {
+    const response = await API.get('/transactions/stats', { params: statFilters });
+    set({ stats: response.data });
+  } catch (error: any) {
+    console.error('[FETCH_STATS ERROR]', error?.response?.data?.message || error.message || error);
+    set({ stats: null });
+  }
+}
+
+
+
 }));

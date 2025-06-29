@@ -33,7 +33,8 @@ const AddTransactionModal: React.FC<Props> = ({ open, onClose }) => {
     try {
       await API.post('/transactions', form);
       showSnackbar('Transaction added!', 'success');
-      fetchTransactions();
+      // ✅ Re-fetch stats + transactions after successful creation
+    fetchTransactions();
       onClose();
     } catch (err) {
       showSnackbar('Failed to add transaction', 'error');

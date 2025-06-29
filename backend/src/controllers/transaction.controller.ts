@@ -95,32 +95,54 @@ export const getTransactionStats = async (req: Request, res: Response) => {
       if (endDate) query.date.$lte = new Date(endDate);
     }
 
-    const allTx = await Transaction.find(query);
+    const transactions = await Transaction.find(query);
 
-    const revenue = allTx.filter(tx => tx.amount > 0).reduce((sum, tx) => sum + tx.amount, 0);
-    const expenses = allTx.filter(tx => tx.amount < 0).reduce((sum, tx) => sum + tx.amount, 0);
-    const balance = revenue + expenses;
+    let revenue = 0;
+    let expenses = 0;
+    const categoryBreakdown: Record<string, number> = {};
+    const lineDataMap: Record<string, number> = {};
+
+    for (const tx of transactions) {
+      if (!tx.category || typeof tx.amount !== 'number') continue;
+
+      // Revenue: positive values
+      if (tx.amount > 0) revenue += tx.amount;
+
+      // Expenses: negative values or category includes "expense"
+      if (tx.amount < 0 || tx.category.toLowerCase().includes('expense')) {
+        expenses += Math.abs(tx.amount);
+      }
+
+      // Category breakdown
+      categoryBreakdown[tx.category] = (categoryBreakdown[tx.category] || 0) + Math.abs(tx.amount);
+
+      // Line data
+      const dateKey = new Date(tx.date).toISOString().split('T')[0];
+      lineDataMap[dateKey] = (lineDataMap[dateKey] || 0) + tx.amount;
+    }
+
+    const lineData = Object.entries(lineDataMap).map(([date, amount]) => ({
+      date,
+      amount,
+    }));
+
+    const totalBalance = revenue - expenses;
     const savings = revenue * 0.2;
 
-    const categoryBreakdown: Record<string, number> = {};
-    allTx.forEach(tx => {
-      if (tx.category) {
-        categoryBreakdown[tx.category] = (categoryBreakdown[tx.category] || 0) + Math.abs(tx.amount);
-      }
-    });
-
     res.status(200).json({
+      totalBalance,
       revenue,
       expenses,
-      totalBalance: balance,
       savings,
-      categoryBreakdown
+      categoryBreakdown,
+      lineData,
     });
   } catch (err: any) {
     console.error('[GET STATS ERROR]', err.message || err);
     res.status(500).json({ message: 'Failed to get transaction stats', error: err.message || err });
   }
 };
+
 
 // ✅ Create a new transaction
 export const createTransaction = async (req: Request, res: Response): Promise<void> => {
