@@ -5,6 +5,19 @@ A full-stack financial application that allows users to **analyze**, **search**,
 > 🔒 Built with TypeScript, React, Node.js, MongoDB, JWT Auth, Recharts, Material UI & Zustand.
 
 ---
+---
+## DEPLOYED APPLICATION LINK:
+
+https://financial-dashboard-ivory-pi.vercel.app/dashboard
+
+---
+---
+## POSTMAN COLLECTION LINK:
+
+[https://web.postman.co/workspace/ad6d27c1-ea43-4047-9a59-270b70f7f924](https://web.postman.co/workspace/ad6d27c1-ea43-4047-9a59-270b70f7f924)
+
+---
+---
 
 ## 📧 Author
 **Vansh Yelekar**  
@@ -42,13 +55,6 @@ Enable financial analysts to:
 - Choose which columns to export
 - Auto-download via browser
 
----
----
-## POSTMAN COLLECTION LINK:
-
-https://web.postman.co/workspace/ad6d27c1-ea43-4047-9a59-270b70f7f924
-
----
 ---
 
 ## ⚙️ Tech Stack
